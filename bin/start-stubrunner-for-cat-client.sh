@@ -30,7 +30,7 @@ EOF
 
 docker run  gcr.io/fe-ciberkleid/springone2021/spring-cloud-contract-stub-runner-boot:3.0.3 \
             --name stubrunner --rm \
-            --env-file cat-client.env \
+            --env-file temp/cat-client.env \
             -p "8750:8750" \
             -p "8081:8081" \
             -p "10000:10000"
