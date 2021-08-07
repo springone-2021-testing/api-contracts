@@ -21,22 +21,29 @@ STUBRUNNER_CLASSIFIER=stubs
 STUBRUNNER_STUBS_MODE=REMOTE
 #STUBRUNNER_IDS=booternetes:cat-service
 STUBRUNNER_IDS=booternetes:cat-service:+:stubs:10000
+#STUBRUNNER_IDS=booternetes:cat-service:1.0.1-b38-cf97e11:stubs:10000
 STUBRUNNER_REPOSITORY_ROOT=https://maven.pkg.github.com/springone-2021-testcontainers/cat-service
-#STUBRUNNER_USERNAME=ciberkleid
-#STUBRUNNER_PASSWORD=<GITHUB-TOKEN>
+STUBRUNNER_USERNAME=ciberkleid
+# GitHub personal access token with "read packages" permission:
+STUBRUNNER_PASSWORD=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
 STUBRUNNER_STUBS_PER_CONSUMER=false
 #STUBRUNNER_CONSUMER_NAME=""
+#SERVER_PORT=8081
+MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
 EOF
 
-docker run  gcr.io/fe-ciberkleid/springone2021/spring-cloud-contract-stub-runner-boot:3.0.3 \
-            --name stubrunner --rm \
+# Image name must be last otherwise args are not detected
+docker run  --name stubrunner --rm --pull always \
             --env-file temp/cat-client.env \
             -p "8750:8750" \
-            -p "8081:8081" \
-            -p "10000:10000"
+            -p "10000:10000" \
+            gcr.io/fe-ciberkleid/springone2021/spring-cloud-contract-stub-runner-boot:3.0.3
 
 # Run test using:
 # http :10000/cats/Toby
+
+# Can also check:
+# http :8750/actuator
 
 #docker stop stubrunner
 #rm temp/cat-client.env
