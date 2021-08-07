@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
 
-# If updating the git tag, check the pom.xml to adjust line numbers (see script details below)
+### Purpose: This script builds a container image for spring-cloud-contract-stub-runner-boot
+
+### Configuration: change the following values as needed
+# If updating the git tag, check/adjust line number settings (see script details below)
 SCC_GIT_TAG=v3.0.3
 DELETE_LINE_START=41
 DELETE_LINE_END=47
-IMAGE_REG_HOSTNAME=gcr.io
-IMAGE_REG_REPONAME=fe-ciberkleid/springone2021
-IMAGE_REG_USERNAME=_json_key
-IMAGE_REG_PASSWORD=/Users/ciberkleid/Downloads/fe-ciberkleid-c2db4d4e8708.json
 
-#####
-# This script builds a container image for spring-cloud-contract-stub-runner-boot
-#####
+### DO NOT MAKE CHANGES BELOW THIS LINE
+
+### Script details:
 # This script performs the following actions:
 # 1. Clone the spring-cloud-contracts project
 # 2. Switch to the desired branch
 # 3. Disable thin-jar configuration by removing the dependency from
-#    the pom.xml for the submodule 'spring-cloud-contract-stub-runner-boot':
+#    the pom.xml for submodule 'spring-cloud-contract-stub-runner-boot':
 #                <plugin>
 #                  <groupId>org.springframework.boot</groupId>
 #                  <artifactId>spring-boot-maven-plugin</artifactId>
@@ -34,6 +33,9 @@ IMAGE_REG_PASSWORD=/Users/ciberkleid/Downloads/fe-ciberkleid-c2db4d4e8708.json
 # 4. Build image using Spring Boot maven plugin (spring-boot:build-image)
 # 5. Publish image to image registry
 ###
+
+## Capture this script's location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # Clone spring-cloud-contract and switch to proper tag
 rm -rf tmp-spring-cloud-contract &&
@@ -53,14 +55,9 @@ cd ..
 # Image name will be auto-generated as "${ARTIFACT_ID}:${ARTIFACT_VERSION}"
 ./mvnw clean spring-boot:build-image -pl spring-cloud-contract-stub-runner-boot
 
-# Publish image
-cat "${IMAGE_REG_PASSWORD}" | docker login -u "${IMAGE_REG_USERNAME}" --password-stdin https://"${IMAGE_REG_HOSTNAME}"
-SOURCE_IMAGE="${ARTIFACT_ID}:${ARTIFACT_VERSION}"
-DEST_IMAGE="${IMAGE_REG_HOSTNAME}/${IMAGE_REG_REPONAME}/${SOURCE_IMAGE}"
-docker tag "${SOURCE_IMAGE}" "${DEST_IMAGE}"
-docker push "${DEST_IMAGE}"
-# docker logout https://"${IMAGE_REG_HOSTNAME}"
-
 # Delete repo clone
 cd ..
 rm -rf tmp-spring-cloud-contract
+
+## Publish image
+source "${SCRIPT_DIR}"/publish-image.sh "${ARTIFACT_ID}:${ARTIFACT_VERSION}"
