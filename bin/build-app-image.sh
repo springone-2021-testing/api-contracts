@@ -3,6 +3,8 @@
 ### Purpose: This script builds an image using "pack." For Java Maven applications, it enables
 ###          tests during the build (sets mvn command to "package") and provides buildpacks
 ###          access to the host Docker daemon, enabling the use of testcontainers.
+###          Testcontainers can be used to instantiate any image as a separate container
+###          (e.g. databases, stubrunner, etc...)
 
 SOURCE_PATH="${1}"
 IMAGE_NAME="${2}"
