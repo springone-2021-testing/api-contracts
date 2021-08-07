@@ -38,9 +38,9 @@ DELETE_LINE_END=47
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # Clone spring-cloud-contract and switch to proper tag
-rm -rf tmp-spring-cloud-contract &&
-  git clone https://github.com/spring-cloud/spring-cloud-contract.git tmp-spring-cloud-contract &&
-  cd tmp-spring-cloud-contract &&
+rm -rf temp/spring-cloud-contract &&
+  git clone https://github.com/spring-cloud/spring-cloud-contract.git temp/spring-cloud-contract &&
+  cd temp/spring-cloud-contract &&
   git checkout "${SCC_GIT_TAG}"
 
 # Disable thin-jar (remove dependency from pom.xml)
@@ -57,7 +57,7 @@ cd ..
 
 # Delete repo clone
 cd ..
-rm -rf tmp-spring-cloud-contract
+#rm -rf temp/spring-cloud-contract
 
 ## Publish image
 source "${SCRIPT_DIR}"/publish-image.sh "${ARTIFACT_ID}:${ARTIFACT_VERSION}"
