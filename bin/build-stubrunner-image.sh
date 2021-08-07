@@ -30,8 +30,9 @@ DELETE_LINE_END=47
 #                    </dependency>
 #                  </dependencies>        <-------------------- Set line number as env var DELETE_LINE_END
 #                </plugin>
-# 4. Build image using Spring Boot maven plugin (spring-boot:build-image)
-# 5. Publish image to image registry
+# 4. Add actuator dependency to pom.xml
+# 5. Build image using Spring Boot maven plugin (spring-boot:build-image)
+# 6. Publish image to image registry
 ###
 
 ## Capture this script's location
@@ -43,12 +44,19 @@ rm -rf temp/spring-cloud-contract &&
   cd temp/spring-cloud-contract &&
   git checkout "${SCC_GIT_TAG}"
 
-# Disable thin-jar (remove dependency from pom.xml)
+# Start editing module pom.xml
 cd spring-cloud-contract-stub-runner-boot
-mv pom.xml pom.xml.backup
-sed "${DELETE_LINE_START},${DELETE_LINE_END}d" pom.xml.backup >pom.xml
+cp pom.xml pom.xml.backup
+# Remove thin-jar plugin dependency; add actuator dependency
+ex pom.xml <<EOF
+:${DELETE_LINE_START},${DELETE_LINE_END}d
+/<dependencies>/ put ='        <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-actuator</artifactId></dependency>'
+wq
+EOF
+# Get artifact id and version (used in image name)
 ARTIFACT_ID=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.artifactId -q -DforceStdout)
 ARTIFACT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)
+# Finished editing module pom.xml
 cd ..
 
 # Build image
@@ -56,7 +64,7 @@ cd ..
 ./mvnw clean spring-boot:build-image -pl spring-cloud-contract-stub-runner-boot
 
 # Delete repo clone
-cd ..
+cd ../..
 #rm -rf temp/spring-cloud-contract
 
 ## Publish image
