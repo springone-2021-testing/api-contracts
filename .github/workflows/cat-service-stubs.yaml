@@ -31,9 +31,9 @@ jobs:
         mvn spring-cloud-contract:convert
         mvn spring-cloud-contract:generateStubs
         mvn --batch-mode deploy:deploy-file -Dclassifier=stubs \
-                                               -Dfile=target/cat-service-${APP_VERSION}-stubs.jar \
-                                               -DgroupId=${APP_GROUP_ID} \
-                                               -DartifactId=${APP_ARTIFACT_ID} \
-                                               -Dversion=${APP_VERSION}-b$GITHUB_RUN_NUMBER-${GIT_SHA_SHORT} \
+                                               -Dfile=target/cat-service-${env.APP_VERSION}-stubs.jar \
+                                               -DgroupId=${env.APP_GROUP_ID} \
+                                               -DartifactId=${env.APP_ARTIFACT_ID} \
+                                               -Dversion=${env.APP_VERSION}-b${{ github.run_number}}-${env.GIT_SHA_SHORT} \
                                                -Durl=https://maven.pkg.github.com/${{ github.repository }} \
                                                -DrepositoryId=github
