@@ -21,11 +21,11 @@ STUBRUNNER_CLASSIFIER=stubs
 STUBRUNNER_STUBS_MODE=REMOTE
 #STUBRUNNER_IDS=booternetes:cat-service
 STUBRUNNER_IDS=booternetes:cat-service:+:stubs:10000
-#STUBRUNNER_IDS=booternetes:cat-service:1.0.1-b38-cf97e11:stubs:10000
+#STUBRUNNER_IDS=booternetes:cat-service:1.0.1-b49-e699cee:stubs:10000
 STUBRUNNER_REPOSITORY_ROOT=https://maven.pkg.github.com/springone-2021-testcontainers/cat-service
 STUBRUNNER_USERNAME=ciberkleid
 # GitHub personal access token with "read packages" permission:
-STUBRUNNER_PASSWORD=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
+STUBRUNNER_PASSWORD=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
 STUBRUNNER_STUBS_PER_CONSUMER=false
 #STUBRUNNER_CONSUMER_NAME=""
 #SERVER_PORT=8081
