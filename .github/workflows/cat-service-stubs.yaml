@@ -37,13 +37,15 @@ jobs:
         run: |
           mvn spring-cloud-contract:convert
           mvn spring-cloud-contract:generateStubs
+      - name: Set env for publish package
+        run: |
+          echo "APP_GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_ENV
+          echo "APP_ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
+          echo "APP_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "GIT_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-7)" >> $GITHUB_ENV
       - name: Publish package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APP_GROUP_ID: $(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
-          APP_ARTIFACT_ID: $(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-          APP_VERSION: $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          GIT_SHA_SHORT: $(echo ${{ github.sha }} | cut -c 1-7)
         run: |
           mvn --batch-mode deploy:deploy-file -Dclassifier=stubs \
                                               -Dfile=target/cat-service-${{ env.APP_VERSION }}-stubs.jar \
