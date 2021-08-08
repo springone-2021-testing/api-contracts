@@ -21,12 +21,11 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Enable Maven repository cache
+      - name: Enable maven repository cache
         uses: actions/cache@v1
         with:
           path: ~/.m2/repository
@@ -37,6 +36,13 @@ jobs:
         run: |
           mvn spring-cloud-contract:convert
           mvn spring-cloud-contract:generateStubs
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build artifacts
+          path: |
+            target
+          retention-days: 1
       - name: Set env for publish package
         run: |
           echo "APP_GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_ENV
@@ -47,10 +53,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn --batch-mode deploy:deploy-file -Dclassifier=stubs \
+          mvn --batch-mode deploy:deploy-file -Durl=https://maven.pkg.github.com/${{ github.repository }} \
+                                              -DrepositoryId=github \
                                               -Dfile=target/cat-service-${{ env.APP_VERSION }}-stubs.jar \
                                               -DgroupId=${{ env.APP_GROUP_ID }} \
                                               -DartifactId=${{ env.APP_ARTIFACT_ID }} \
                                               -Dversion=${{ env.APP_VERSION }}-b${{ github.run_number }}-${{ env.GIT_SHA_SHORT }} \
-                                              -Durl=https://maven.pkg.github.com/${{ github.repository }} \
-                                              -DrepositoryId=github
+                                              -Dpackaging=jar \
+                                              -Dclassifier=stubs \
+                                              -DgeneratePom=true \
+                                              -DgeneratePom.description="Spring Cloud Contract stub jar" \
+                                              -DrepositoryLayout=default
+
