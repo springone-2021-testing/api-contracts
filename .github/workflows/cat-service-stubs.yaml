@@ -41,7 +41,7 @@ jobs:
         with:
           name: Build artifacts
           path: |
-            target
+            ${{ env.WORKING_DIRECTORY }}/target
           retention-days: 1
       - name: Set env for publish package
         run: |
