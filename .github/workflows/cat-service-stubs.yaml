@@ -5,6 +5,10 @@ on:
     branches: [ main ]
     paths:
       - 'cat-service/**'
+      - 'bump-all'
+
+env:
+  PROJECT_PATH: ${{ github.workspace }}/cat-service
 
 jobs:
   publish_stubs:
@@ -19,6 +23,13 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
+    - name: Enable Maven repository cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('${{ env.PROJECT_PATH }}/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: Build and publish package
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -27,13 +38,13 @@ jobs:
         APP_VERSION: $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         GIT_SHA_SHORT: $(echo ${{ github.sha }} | cut -c 1-7)
       run: |
-        cd cat-service
+        cd ${{ env.PROJECT_PATH }}
         mvn spring-cloud-contract:convert
         mvn spring-cloud-contract:generateStubs
         mvn --batch-mode deploy:deploy-file -Dclassifier=stubs \
-                                               -Dfile=target/cat-service-${env.APP_VERSION}-stubs.jar \
-                                               -DgroupId=${env.APP_GROUP_ID} \
-                                               -DartifactId=${env.APP_ARTIFACT_ID} \
-                                               -Dversion=${env.APP_VERSION}-b${{ github.run_number}}-${env.GIT_SHA_SHORT} \
+                                               -Dfile=target/cat-service-${{ env.APP_VERSION }}-stubs.jar \
+                                               -DgroupId=${{ env.APP_GROUP_ID }} \
+                                               -DartifactId=${{ env.APP_ARTIFACT_ID }} \
+                                               -Dversion=${{ env.APP_VERSION }}-b${{ github.run_number}}-${{ env.GIT_SHA_SHORT }} \
                                                -Durl=https://maven.pkg.github.com/${{ github.repository }} \
                                                -DrepositoryId=github
