@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>springone-demo</groupId>
+    <artifactId>message-board</artifactId>
+    <version>1.0.0</version>
+    <name>message-board</name>
+    <properties>
+        <scc-maven-plugin.version>2.1.5.RELEASE</scc-maven-plugin.version>
+        <guru-scc-oa3.version>2.1.2.0</guru-scc-oa3.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>guru.springframework</groupId>
+            <artifactId>spring-cloud-contract-oa3</artifactId>
+            <version>${guru-scc-oa3.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+                <version>${scc-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <testFramework>JUNIT5</testFramework>
+                    <!--					<packageWithBaseClasses>com.example.XXXXX</packageWithBaseClasses>-->
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>guru.springframework</groupId>
+                        <artifactId>spring-cloud-contract-oa3</artifactId>
+                        <version>${guru-scc-oa3.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>
