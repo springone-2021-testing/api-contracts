@@ -7,12 +7,15 @@
     <artifactId>cat-service</artifactId>
     <version>1.0.0</version>
     <name>cat-service</name>
+    <properties>
+        <scc-maven-plugin.version>3.0.3</scc-maven-plugin.version>
+    </properties>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-                <version>3.0.3</version>
+                <version>${scc-maven-plugin.version}</version>
                 <extensions>true</extensions>
             </plugin>
         </plugins>

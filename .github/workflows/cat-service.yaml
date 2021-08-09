@@ -1,0 +1,67 @@
+name: Publish Stubs - Cat Service
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'cat-service/**'
+      - 'bump-all'
+
+env:
+  PROJECT_PATH: cat-service
+
+jobs:
+  publish_stubs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    defaults:
+      run:
+        working-directory: ${{ github.WORKSPACE }}/${{ env.PROJECT_PATH }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Enable Maven repository cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+          key: ${{ runner.OS }}-maven-${{ env.PROJECT_PATH }}-${{ hashFiles('${{ github.WORKSPACE }}/${{ env.PROJECT_PATH }}/pom.xml') }}
+          restore-keys: |
+            ${{ runner.OS }}-maven-${{ env.PROJECT_PATH }}
+      - name: Build package
+        run: |
+          mvn spring-cloud-contract:convert
+          mvn spring-cloud-contract:generateStubs
+#     For debugging:
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build artifacts
+          path: |
+            ${{ github.WORKSPACE }}/${{ env.PROJECT_PATH }}/target
+          retention-days: 1
+      - name: Set env
+        run: |
+          echo "APP_GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_ENV
+          echo "APP_ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
+          echo "APP_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "SHA_SHORT=$(echo ${{ github.SHA }} | cut -c 1-7)" >> $GITHUB_ENV
+      - name: Publish package
+        run: |
+          mvn --batch-mode deploy:deploy-file -DrepositoryId=repsy \
+                                              -Durl=https://ciberkleid:${{ secrets.REPSY_PASSWORD }}@repo.repsy.io/mvn/ciberkleid/public \
+                                              -Dfile=target/${{ env.APP_ARTIFACT_ID }}-${{ env.APP_VERSION }}-stubs.jar \
+                                              -DgroupId=${{ env.APP_GROUP_ID }} \
+                                              -DartifactId=${{ env.APP_ARTIFACT_ID }} \
+                                              -Dversion=${{ env.APP_VERSION }}-b${{ github.RUN_NUMBER }}-${{ env.SHA_SHORT }} \
+                                              -Dpackaging=jar \
+                                              -Dclassifier=stubs \
+                                              -DgeneratePom=true \
+                                              -DgeneratePom.description="Spring Cloud Contract stub jar" \
+                                              -DrepositoryLayout=default

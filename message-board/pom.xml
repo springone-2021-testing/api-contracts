@@ -26,10 +26,6 @@
                 <artifactId>spring-cloud-contract-maven-plugin</artifactId>
                 <version>${scc-maven-plugin.version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <testFramework>JUNIT5</testFramework>
-                    <!--					<packageWithBaseClasses>com.example.XXXXX</packageWithBaseClasses>-->
-                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>guru.springframework</groupId>
