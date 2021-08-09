@@ -56,12 +56,12 @@ jobs:
           echo "APP_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
           echo "GIT_SHA_SHORT=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_ENV
       - name: Publish package
-        env:
-          MAVEN_USERNAME: ${{ secrets.REPSY_USERNAME }}
-          MAVEN_CENTRAL_TOKEN: ${{ secrets.REPSY_PASSWORD }}
+#        env:
+#          MAVEN_USERNAME: ${{ secrets.REPSY_USERNAME }}
+#          MAVEN_CENTRAL_TOKEN: ${{ secrets.REPSY_PASSWORD }}
         run: |
           mvn --batch-mode deploy:deploy-file -DrepositoryId=repsy \
-                                              -Durl=https://repo.repsy.io/mvn/ciberkleid/public \
+                                              -Durl=https://ciberkleid:${{ secrets.REPSY_PASSWORD }}@repo.repsy.io/mvn/ciberkleid/public \
                                               -Dfile=target/cat-service-${{ env.APP_VERSION }}-stubs.jar \
                                               -DgroupId=${{ env.APP_GROUP_ID }} \
                                               -DartifactId=${{ env.APP_ARTIFACT_ID }} \
