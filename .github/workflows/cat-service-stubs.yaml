@@ -21,21 +21,27 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - name: Set up JDK and Maven settings.xml
+        uses: actions/setup-java@v2
+          with:
+            distribution: 'adopt'
+            java-version: '11'
+#            server-id: repsy
+#            server-username: ${{ secrets.REPSY_USERNAME }}
+#            server-password: ${{ secrets.REPSY_PASSWORD }}
+      - name: Enable Maven repository cache
+        uses: actions/cache@v2
         with:
-          java-version: '11'
-          distribution: 'adopt'
-      - name: Enable maven repository cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('${{ env.WORKING_DIRECTORY }}/pom.xml') }}
+          path: |
+            ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build package
         run: |
           mvn spring-cloud-contract:convert
           mvn spring-cloud-contract:generateStubs
+#     For debugging:
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -43,18 +49,19 @@ jobs:
           path: |
             ${{ env.WORKING_DIRECTORY }}/target
           retention-days: 1
-      - name: Set env for publish package
+      - name: Set env
         run: |
           echo "APP_GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_ENV
           echo "APP_ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
           echo "APP_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-          echo "GIT_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-7)" >> $GITHUB_ENV
+          echo "GIT_SHA_SHORT=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_ENV
       - name: Publish package
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.REPSY_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.REPSY_PASSWORD }}
         run: |
-          mvn --batch-mode deploy:deploy-file -Durl=https://maven.pkg.github.com/${{ github.repository }} \
-                                              -DrepositoryId=github \
+          mvn --batch-mode deploy:deploy-file -DrepositoryId=repsy \
+                                              -Durl=https://repo.repsy.io/mvn/ciberkleid/public \
                                               -Dfile=target/cat-service-${{ env.APP_VERSION }}-stubs.jar \
                                               -DgroupId=${{ env.APP_GROUP_ID }} \
                                               -DartifactId=${{ env.APP_ARTIFACT_ID }} \
@@ -64,4 +71,3 @@ jobs:
                                               -DgeneratePom=true \
                                               -DgeneratePom.description="Spring Cloud Contract stub jar" \
                                               -DrepositoryLayout=default
-
