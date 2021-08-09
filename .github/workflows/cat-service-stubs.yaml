@@ -8,7 +8,7 @@ on:
       - 'bump-all'
 
 env:
-  WORKING_DIRECTORY: ${{ github.workspace }}/cat-service
+  PROJECT_PATH: cat-service
 
 jobs:
   publish_stubs:
@@ -18,25 +18,22 @@ jobs:
       packages: write
     defaults:
       run:
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+        working-directory: ${{ github.WORKSPACE }}/${{ env.PROJECT_PATH }}
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK and Maven settings.xml
+      - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
-#          server-id: repsy
-#          server-username: ${{ secrets.REPSY_USERNAME }}
-#          server-password: ${{ secrets.REPSY_PASSWORD }}
       - name: Enable Maven repository cache
         uses: actions/cache@v2
         with:
           path: |
             ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ env.PROJECT_PATH }}-${{ hashFiles('${{ github.WORKSPACE }}/${{ env.PROJECT_PATH }}/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os }}-maven-${{ env.PROJECT_PATH }}
       - name: Build package
         run: |
           mvn spring-cloud-contract:convert
@@ -47,7 +44,7 @@ jobs:
         with:
           name: Build artifacts
           path: |
-            ${{ env.WORKING_DIRECTORY }}/target
+            ${{ github.WORKSPACE }}/${{ env.PROJECT_PATH }}/target
           retention-days: 1
       - name: Set env
         run: |
@@ -56,9 +53,6 @@ jobs:
           echo "APP_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
           echo "GIT_SHA_SHORT=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_ENV
       - name: Publish package
-#        env:
-#          MAVEN_USERNAME: ${{ secrets.REPSY_USERNAME }}
-#          MAVEN_CENTRAL_TOKEN: ${{ secrets.REPSY_PASSWORD }}
         run: |
           mvn --batch-mode deploy:deploy-file -DrepositoryId=repsy \
                                               -Durl=https://ciberkleid:${{ secrets.REPSY_PASSWORD }}@repo.repsy.io/mvn/ciberkleid/public \
