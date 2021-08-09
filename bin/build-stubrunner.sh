@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 
-### Purpose: This script builds a container image for spring-cloud-contract-stub-runner-boot
+### Purpose: This script builds and publishes a container image for spring-cloud-contract-stub-runner-boot
 
-### Configuration: change the following values as needed
+### Build Image Configuration: change the following values as needed
 # If updating the git tag, check/adjust line number settings (see script details below)
 SCC_GIT_TAG=v3.0.3
 DELETE_LINE_START=41
 DELETE_LINE_END=47
+
+### Publish Image Configuration: Set the following env vars in your terminal session to overwrite the default values
+IMAGE_REG_HOSTNAME="${IMAGE_REG_HOSTNAME:-gcr.io}"
+IMAGE_REG_REPONAME="${IMAGE_REG_REPONAME:-fe-ciberkleid/springone2021}"
+IMAGE_REG_USERNAME="${IMAGE_REG_USERNAME:-_json_key}"
+IMAGE_REG_PASSWORD="${IMAGE_REG_PASSWORD:-/Users/ciberkleid/Downloads/fe-ciberkleid-c2db4d4e8708.json}"
 
 ### DO NOT MAKE CHANGES BELOW THIS LINE
 
@@ -68,4 +74,26 @@ cd ../..
 #rm -rf temp/spring-cloud-contract
 
 ## Publish image
-source "${SCRIPT_DIR}"/publish-image.sh "${ARTIFACT_ID}:${ARTIFACT_VERSION}"
+SOURCE_IMAGE="${ARTIFACT_ID}:${ARTIFACT_VERSION}"
+
+# Log in to image registry
+cat "${IMAGE_REG_PASSWORD}" | docker login -u "${IMAGE_REG_USERNAME}" --password-stdin https://"${IMAGE_REG_HOSTNAME}"
+
+# Publish image
+TARGET_IMAGE="${IMAGE_REG_HOSTNAME}/${IMAGE_REG_REPONAME}/${SOURCE_IMAGE}"
+docker tag "${SOURCE_IMAGE}" "${TARGET_IMAGE}"
+docker push "${TARGET_IMAGE}"
+
+# Publish image as "latest"
+TARGET_IMAGE_LATEST="${TARGET_IMAGE%:*}:latest"
+if [[ "${TARGET_IMAGE_LATEST}" != "${TARGET_IMAGE}" ]]; then
+  docker tag "${SOURCE_IMAGE}" "${TARGET_IMAGE_LATEST}"
+  docker push "${TARGET_IMAGE_LATEST}"
+fi
+
+echo; echo "Successfully built and published image:"
+docker images ${IMAGE_REG_HOSTNAME}/${IMAGE_REG_REPONAME}/${ARTIFACT_ID}
+echo
+
+# Log out of image registry
+# docker logout https://"${IMAGE_REG_HOSTNAME}"

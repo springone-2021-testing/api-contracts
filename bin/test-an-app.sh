@@ -12,13 +12,13 @@ IMAGE_NAME="${2}"
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 USAGE="
-USAGE:  build-app-image.sh <source-path> <image-name>
+USAGE:  test-an-app.sh <source-path> <image-name>
 ARGS:   --> source-path: path to the source code/artifact
         --> image-name: name for the image to be built
 EXAMPLES:
-        build-app-image.sh . my-app
-        build-app-image.sh ~/workspace/my-app my-app:1.0.0
-        build-app-image.sh target/my-app-1.0.0.jar my-app:1.0.0
+        test-an-app.sh . my-app
+        test-an-app.sh ~/workspace/my-app my-app:1.0.0
+        test-an-app.sh target/my-app-1.0.0.jar my-app:1.0.0
 "
 
 if [[ -z "${SOURCE_PATH}" || -z "${IMAGE_NAME}" ]]; then
@@ -52,7 +52,3 @@ pack build "${IMAGE_NAME}" \
   -e DOCKER_HOST=tcp://${DOCKER_HOST_IP}:2375
 
 pkill socat
-
-## Publish image
-## COMMENT OUT - App images will be published to ghcr.io by GitHub Actions
-#source "${SCRIPT_DIR}"/publish-image.sh "${IMAGE_NAME}"
