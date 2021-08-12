@@ -11,14 +11,14 @@
         <scc-maven-plugin.version>2.1.5.RELEASE</scc-maven-plugin.version>
         <guru-scc-oa3.version>2.1.2.0</guru-scc-oa3.version>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>guru.springframework</groupId>
-            <artifactId>spring-cloud-contract-oa3</artifactId>
-            <version>${guru-scc-oa3.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+<!--    <dependencies>-->
+<!--        <dependency>-->
+<!--            <groupId>guru.springframework</groupId>-->
+<!--            <artifactId>spring-cloud-contract-oa3</artifactId>-->
+<!--            <version>${guru-scc-oa3.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+<!--    </dependencies>-->
     <build>
         <plugins>
             <plugin>
