@@ -14,18 +14,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Message'
+              $ref: '#/components/schemas/CreateMessage'
         description: Created message object
         required: true
         x-contracts:
         - contractId: 1
           body:
-            id: 1
             username: "Cora"
             text: "Welcome to everyone!"
         - contractId: 2
           body:
-            id: 2
             username: "andy"
             text: "I am here too!"
       responses:
@@ -40,12 +38,14 @@ paths:
             body:
               status: "Success"
               operation: "Create"
+              parameter: "1"
             headers:
               Content-Type: application/json;charset=UTF-8
           - contractId: 2
             body:
               status: "Failure: Name must be Uppercase"
               operation: "Create"
+              parameter: "0"
             headers:
               Content-Type: application/json;charset=UTF-8
 
@@ -74,6 +74,13 @@ paths:
               Content-Type: application/json;charset=UTF-8
 components:
   schemas:
+    CreateMessage:
+      type: object
+      properties:
+        username:
+          type: string
+        text:
+          type: string
     Message:
       type: object
       properties:
@@ -90,4 +97,6 @@ components:
         operation:
           type: string
         status:
+          type: string
+        parameter:
           type: string

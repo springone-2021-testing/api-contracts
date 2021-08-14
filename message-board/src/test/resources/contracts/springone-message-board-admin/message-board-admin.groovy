@@ -8,7 +8,7 @@ Contract.make {
     }
     response {
         status(OK())
-        body([message: "Success", type: "Delete"])
+        body([message: "Success", type: "Delete", parameter: "1"])
         headers {
             contentType(applicationJson())
         }
