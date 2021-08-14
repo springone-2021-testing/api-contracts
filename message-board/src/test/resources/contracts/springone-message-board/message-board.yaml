@@ -1,47 +1,14 @@
 openapi: 3.0.0
 info:
-  description: >-
-    This is a sample message board server.  You can find out more about    
-    Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net,
-    #swagger](http://swagger.io/irc/).      For this sample, you can use the api
-    key `special-key` to test the authorization     filters.
   version: 1.0.0-oas3
-  title: Swagger MessageBoard
-  termsOfService: 'http://swagger.io/terms/'
-  contact:
-    email: apiteam@swagger.io
-  license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-tags:
-  - name: messsage
-    description: Operations about message
-    externalDocs:
-      description: Check the messages on the board
-      url: 'http://swagger.io'
 paths:
   /message:
     post:
-      tags:
-        - message
-      summary: Create message
-      description: Add a mesage to the board.
-      operationId: createMessage
       x-contracts:
         - contractId: 1
           name: Should add the message
-          priority: 1
         - contractId: 2
           name: Should not add the message
-          
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Message'
-        description: Created message object
-        required: true
-        
         x-contracts:
           - contractId: 1
             body:
@@ -53,60 +20,53 @@ paths:
               id: 2
               username: "andy"
               text: "I am here too!"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
       responses:
         "200":
-          description: Message added successfully
+          description: Message post result
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-
           x-contracts:
             - contractId: 1
               body:
-                message: "Success"
-                type: "Create"
+                status: "Success"
+                operation: "Create"
               headers:
                 Content-Type: application/json;charset=UTF-8
             - contractId: 2
               body:
-                message: "Failure: Name must be Uppercase"
-                type: "Create"
+                status: "Failure: Name must be Uppercase"
+                operation: "Create"
               headers:
                 Content-Type: application/json;charset=UTF-8
 
     get:
-      tags:
-        - user
-      summary: Get all the messages
-      description: ''
-      operationId: getMessage
       x-contracts:
         - contractId: 1
-          name: Should return a message
-          priority: 1      
+          name: Should return all messages
       responses:
         "200":
-          description: Message retrieved successfully
+          description: Messages retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Message'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
 
           x-contracts:
             - contractId: 1
               body:
-                id: 1
-                username: "Cora"
-                text: "Welcome to everyone!"
+                [ {id: 1, username: "Cora", text: "Welcome to everyone!" } ]
               headers:
                 Content-Type: application/json;charset=UTF-8
-externalDocs:
-  description: Find out more about Swagger
-  url: 'http://swagger.io'
-servers:
-  - url: 'https://message-board.swagger.io/v2'
-  - url: 'http://message-board.swagger.io/v2'
 components:
   schemas:
     Message:
@@ -119,15 +79,10 @@ components:
           type: string
         text:
           type: string
-      xml:
-        name: User
     ApiResponse:
       type: object
       properties:
-        code:
-          type: integer
-          format: int32
-        type:
+        operation:
           type: string
-        message:
+        status:
           type: string
