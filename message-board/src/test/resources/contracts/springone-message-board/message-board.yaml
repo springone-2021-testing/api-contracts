@@ -4,53 +4,56 @@ info:
 paths:
   /message:
     post:
+      operationId: createMessage
       x-contracts:
-        - contractId: 1
-          name: Should add the message
-        - contractId: 2
-          name: Should not add the message
-        x-contracts:
-          - contractId: 1
-            body:
-              id: 1
-              username: "Cora"
-              text: "Welcome to everyone!"
-          - contractId: 2
-            body:
-              id: 2
-              username: "andy"
-              text: "I am here too!"
+      - contractId: 1
+        name: Should add the message
+      - contractId: 2
+        name: Should not add the message
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Message'
+        description: Created message object
         required: true
+        x-contracts:
+        - contractId: 1
+          body:
+            id: 1
+            username: "Cora"
+            text: "Welcome to everyone!"
+        - contractId: 2
+          body:
+            id: 2
+            username: "andy"
+            text: "I am here too!"
       responses:
         "200":
-          description: Message post result
+          description: Message added successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
           x-contracts:
-            - contractId: 1
-              body:
-                status: "Success"
-                operation: "Create"
-              headers:
-                Content-Type: application/json;charset=UTF-8
-            - contractId: 2
-              body:
-                status: "Failure: Name must be Uppercase"
-                operation: "Create"
-              headers:
-                Content-Type: application/json;charset=UTF-8
+          - contractId: 1
+            body:
+              status: "Success"
+              operation: "Create"
+            headers:
+              Content-Type: application/json;charset=UTF-8
+          - contractId: 2
+            body:
+              status: "Failure: Name must be Uppercase"
+              operation: "Create"
+            headers:
+              Content-Type: application/json;charset=UTF-8
 
     get:
+      operationId: getMessage
       x-contracts:
-        - contractId: 1
-          name: Should return all messages
+      - contractId: 1
+        name: Should return all messages
       responses:
         "200":
           description: Messages retrieved
@@ -62,11 +65,13 @@ paths:
                   $ref: '#/components/schemas/Message'
 
           x-contracts:
-            - contractId: 1
-              body:
-                [ {id: 1, username: "Cora", text: "Welcome to everyone!" } ]
-              headers:
-                Content-Type: application/json;charset=UTF-8
+          - contractId: 1
+            body:
+            - id: 1
+              username: "Cora"
+              text: "Welcome to everyone!"
+            headers:
+              Content-Type: application/json;charset=UTF-8
 components:
   schemas:
     Message:
