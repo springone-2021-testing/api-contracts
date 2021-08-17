@@ -22,10 +22,14 @@ paths:
           body:
             username: "Cora"
             text: "Welcome to everyone!"
+          headers:
+            Content-Type: application/json;charset=UTF-8
         - contractId: 2
           body:
             username: "andy"
             text: "I am here too!"
+          headers:
+            Content-Type: application/json;charset=UTF-8
       responses:
         "200":
           description: Message added successfully
