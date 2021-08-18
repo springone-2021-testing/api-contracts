@@ -8,17 +8,10 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>message-board-contracts</name>
     <properties>
-        <scc-maven-plugin.version>2.1.5.RELEASE</scc-maven-plugin.version>
-        <guru-scc-oa3.version>2.1.2.0</guru-scc-oa3.version>
+        <scc-maven-plugin.version>3.0.3</scc-maven-plugin.version>
+<!--        <guru-scc-oa3.version>2.1.2.0</guru-scc-oa3.version>-->
     </properties>
-<!--    <dependencies>-->
-<!--        <dependency>-->
-<!--            <groupId>guru.springframework</groupId>-->
-<!--            <artifactId>spring-cloud-contract-oa3</artifactId>-->
-<!--            <version>${guru-scc-oa3.version}</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
+
     <build>
         <plugins>
             <plugin>
@@ -27,13 +20,28 @@
                 <version>${scc-maven-plugin.version}</version>
                 <extensions>true</extensions>
                 <dependencies>
+<!--                    <dependency>-->
+<!--                        <groupId>guru.springframework</groupId>-->
+<!--                        <artifactId>spring-cloud-contract-oa3</artifactId>-->
+<!--                        <version>${guru-scc-oa3.version}</version>-->
+<!--                    </dependency>-->
+                    <!-- Until guru.springframework.spring-cloud-contract-oa3:3.0.x gets released -->
                     <dependency>
-                        <groupId>guru.springframework</groupId>
+                        <groupId>com.github.marcingrzejszczak</groupId>
                         <artifactId>spring-cloud-contract-oa3</artifactId>
-                        <version>${guru-scc-oa3.version}</version>
+                        <version>upgrade-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>
         </plugins>
     </build>
+
+    <!-- Until guru.springframework.spring-cloud-contract-oa3:3.0.x gets released -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </pluginRepository>
+    </pluginRepositories>
+
 </project>
