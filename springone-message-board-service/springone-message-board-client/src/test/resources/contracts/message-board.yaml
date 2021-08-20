@@ -23,13 +23,13 @@ paths:
             username: "Cora"
             text: "Welcome to everyone!"
           headers:
-            Content-Type: application/json;charset=UTF-8
+            Content-Type: application/json
         - contractId: 2
           body:
             username: "andy"
             text: "I am here too!"
           headers:
-            Content-Type: application/json;charset=UTF-8
+            Content-Type: application/json
       responses:
         "200":
           description: Message added successfully
@@ -44,14 +44,14 @@ paths:
               operation: "Create"
               parameter: "1"
             headers:
-              Content-Type: application/json;charset=UTF-8
+              Content-Type: application/json
           - contractId: 2
             body:
               status: "Failure: Name must be Uppercase"
               operation: "Create"
               parameter: "0"
             headers:
-              Content-Type: application/json;charset=UTF-8
+              Content-Type: application/json
 
     get:
       operationId: getMessage
@@ -75,7 +75,7 @@ paths:
               username: "Cora"
               text: "Welcome to everyone!"
             headers:
-              Content-Type: application/json;charset=UTF-8
+              Content-Type: application/json
 components:
   schemas:
     CreateMessage:
