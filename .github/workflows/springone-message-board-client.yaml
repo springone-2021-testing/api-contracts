@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'springone-message-board-service/springone-message-board-client/**'
-      - 'bump-all'
+      - 'bump-all-github-actions'
 
 env:
   PROJECT_PATH: springone-message-board-service/springone-message-board-client

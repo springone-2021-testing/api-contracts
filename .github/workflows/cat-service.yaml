@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'cat-service/**'
-      - 'bump-all'
+      - 'bump-all-github-actions'
 
 env:
   PROJECT_PATH: cat-service
