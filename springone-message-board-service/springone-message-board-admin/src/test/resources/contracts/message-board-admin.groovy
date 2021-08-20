@@ -6,14 +6,14 @@ Contract.make {
         url("/message/Cora")
         method(DELETE())
         headers {
-            header 'Content-Type': 'application/json;charset=UTF-8'
+            contentType(applicationJson())
         }
     }
     response {
         status(OK())
         body([message: "Success", type: "Delete", parameter: "1"])
         headers {
-            header 'Content-Type': 'application/json;charset=UTF-8'
+            contentType(applicationJson())
         }
 
     }

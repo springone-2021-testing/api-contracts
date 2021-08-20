@@ -1,14 +1,14 @@
-name: Publish Stubs - Message Board
+name: Publish Stubs - Message Board Admin
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'message-board/**'
+      - 'springone-message-board-service/springone-message-board-admin/**'
       - 'bump-all'
 
 env:
-  PROJECT_PATH: message-board
+  PROJECT_PATH: springone-message-board-service/springone-message-board-admin
 
 jobs:
   publish_stubs:
@@ -44,7 +44,7 @@ jobs:
           echo "APP_ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
           echo "APP_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
           echo "SHA_SHORT=$(echo ${{ github.SHA }} | cut -c 1-7)" >> $GITHUB_ENV
-      - name: Publish package
+      - name: Publish client
         run: |
           mvn --batch-mode deploy:deploy-file -DrepositoryId=repsy \
                                               -Durl=https://ciberkleid:${{ secrets.REPSY_PASSWORD }}@repo.repsy.io/mvn/ciberkleid/public \
