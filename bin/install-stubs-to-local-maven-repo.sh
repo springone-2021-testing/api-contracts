@@ -19,7 +19,11 @@ function build-and-install {
   APP_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
   APP_COMMIT_TIME=$(git show -s --format=%ct)
   APP_COMMIT_SHA_SHORT=$(git rev-parse --short HEAD)
-  APP_NEW_VERSION="${APP_VERSION}-${APP_COMMIT_TIME}-${APP_COMMIT_SHA_SHORT}"
+  if [[ "${APP_VERSION}" == *-SNAPSHOT ]]; then
+    APP_NEW_VERSION="${APP_VERSION}-${APP_COMMIT_TIME}-${APP_COMMIT_SHA_SHORT}"
+  else
+    APP_NEW_VERSION="${APP_VERSION}"
+  fi
 
   mvn install:install-file \
           -DartifactId="${APP_ARTIFACT_ID}" \
@@ -44,10 +48,9 @@ function build-and-install {
 projectArray=()
 while IFS= read -rd '' pomFile; do
   projectArray+=( $(dirname "$pomFile") )
-done < <(find "${API_CONTRACTS_HOME}" -type f -name 'pom.xml' -print0)
+done < <(find "${API_CONTRACTS_HOME}" -type f -name pom.xml -not -path "${API_CONTRACTS_HOME}/.github/*" -not -path "${API_CONTRACTS_HOME}/bin/*" -not -path "${API_CONTRACTS_HOME}/*/target/*" -print0)
 printf 'Found %s pom.xml files\n' "${#projectArray[@]}"
 
-## If no pom.xml files were found, stop
 if [ "${#projectArray[@]}" -gt 0 ]; then
   ## Prompt user to choose an available project
   echo 'Please select a project:'
@@ -71,8 +74,10 @@ if [ "${#projectArray[@]}" -gt 0 ]; then
     build-and-install
     cd "${START_DIR}"
   else
+    # User selected an invalid option
     echo >&2 'ERROR: Invalid selection'
   fi
 else
+  # No pom.xml files found
   echo >&2 'ERROR: No projects found'
 fi
