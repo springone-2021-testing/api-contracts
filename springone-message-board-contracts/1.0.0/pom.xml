@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>springone</groupId>
-    <artifactId>message-board-client-contracts</artifactId>
-    <version>0.0.1</version>
-    <name>message-board-client-contracts</name>
+    <artifactId>message-board-contracts</artifactId>
+    <version>1.0.0</version>
+    <name>message-board-contracts</name>
     <properties>
         <scc-maven-plugin.version>3.0.3</scc-maven-plugin.version>
-<!--        <guru-scc-oa3.version>2.1.2.0</guru-scc-oa3.version>-->
+        <!--        <guru-scc-oa3.version>2.1.2.0</guru-scc-oa3.version>-->
     </properties>
 
     <build>
