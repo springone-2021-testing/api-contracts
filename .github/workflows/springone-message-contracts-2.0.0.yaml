@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'springone-message-board-service/springone-message-board-client/**'
+      - 'springone-message-board-contracts/2.0.0/**'
       - 'bump-all-github-actions'
 
 env:
-  PROJECT_PATH: springone-message-board-service/springone-message-board-client
+  PROJECT_PATH: springone-message-board-contracts/2.0.0
 
 jobs:
   publish_stubs:
