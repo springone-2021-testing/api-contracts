@@ -10,9 +10,7 @@ API_CONTRACTS_HOME="${SCRIPT_DIR}/.."
 
 function build-and-install {
 
-  mvn clean
-  mvn spring-cloud-contract:convert
-  mvn spring-cloud-contract:generateStubs
+  mvn clean spring-cloud-contract:convert spring-cloud-contract:generateStubs
 
   APP_GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
   APP_ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
