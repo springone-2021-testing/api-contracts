@@ -3,7 +3,7 @@ import org.springframework.cloud.contract.spec.Contract
 Contract.make {
     description("should fail delete the message by username")
     request {
-        url("/message/anamethat_doesnotexist")
+        url("/message/anamethatdoesnotexist")
         method(DELETE())
         headers {
             contentType(applicationJson())
